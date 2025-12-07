@@ -10,6 +10,6 @@ form.addEventListener('submit', event => {
   getImagesByQuery(value);
 });
 
-export const lightbox = new SimpleLightbox('.listSearchImage a', {
+export const lightbox = new SimpleLightbox('.gallery a', {
   /* options */
 });

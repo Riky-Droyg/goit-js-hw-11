@@ -2,7 +2,7 @@ import axios from 'axios';
 import iziToast from 'izitoast';
 import { lightbox } from './render-functions';
 
-const listSearchImage = document.querySelector('.listSearchImage');
+const gallery = document.querySelector('.gallery');
 const loader = document.querySelector('.loader');
 
 export function getImagesByQuery(query) {
@@ -75,6 +75,6 @@ function addSearchImage(arroy) {
     ''
   );
 
-  listSearchImage.innerHTML = searhEl;
+  gallery.innerHTML = searhEl;
   lightbox.refresh();
 }
