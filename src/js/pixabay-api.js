@@ -32,7 +32,6 @@ export function getImagesByQuery(query) {
         message: error.message,
         position: 'topRight',
       });
-      console.log(error);
     })
     .finally(() => {
       loader.classList.add('is-hidden');
