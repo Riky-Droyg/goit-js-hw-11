@@ -18,7 +18,17 @@ const form = document.querySelector('.form');
 
 form.addEventListener('submit', event => {
   event.preventDefault();
-  const input = event.target.elements['search-text'].value;
+  const input = event.target.elements['search-text'].value.trim();
+  if (!input) {
+    iziToast.info({
+        title: 'info',
+        message:
+          'Поле вводу порожнє',
+        position: 'topRight',
+      });
+      return
+  };
+
   clearGallery();
   showLoader();
   getImagesByQuery(input)
@@ -31,7 +41,6 @@ form.addEventListener('submit', event => {
           'Sorry, there are no images matching your search query. Please try again!',
         position: 'topRight',
       });
-      console.log(error);
     })
     .finally(() => {
       hideLoader();
