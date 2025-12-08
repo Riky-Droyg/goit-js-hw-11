@@ -32,35 +32,35 @@ p {
 
 }
 
-.listSearchImage {
+.gallery {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
     gap: 20px;
 
 }
-.listSearchImage ul{
+.gallery ul{
     display: flex;
     height: 50px;
 }
-.listSearchImage ul li{
+.gallery ul li{
     width: 25%;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
 }
-.listSearchImage ul li p{
+.gallery ul li p{
     text-align: center;
 }
 
-.listSearchImage div {
+.gallery div {
     height: 150px;
     object-fit: cover;
 
 }
 
-.listSearchImage div img {
+.gallery div img {
     width: 100%;
     height: 100%;
     object-fit: cover;
