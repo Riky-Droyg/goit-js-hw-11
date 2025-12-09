@@ -4,7 +4,7 @@ import SimpleLightbox from 'simplelightbox';
 const gallery = document.querySelector('.gallery');
 const loader = document.querySelector('.loader');
 const lightbox = new SimpleLightbox('.photo-card div a', {});
-
+const btn = document.querySelector('.btn[type=submit]');
 export function getImagesByQuery(query) {
   return fetchImages(query)
     .then(data => {
@@ -53,4 +53,10 @@ export function hideLoader() {
 }
 export function showLoader() {
   loader.classList.remove('is-hidden');
+}
+export function hideLoadMoreButton() {
+  btn.classList.add('is-hidden');
+}
+export function showLoadMoreButton() {
+  btn.classList.remove('is-hidden');
 }
