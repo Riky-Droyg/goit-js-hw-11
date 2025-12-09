@@ -21,6 +21,7 @@ const input = document.querySelector('input[name="search-text"]');
 let page = 1;
 let inputValue = '';
 const PER_PAGE = 15;
+let totalPages;
 
 async function actionFormSubmit(event) {
   event.preventDefault();
@@ -42,8 +43,11 @@ async function actionFormSubmit(event) {
 
   try {
     page = 1;
-    const data = await fetchImages(inputValue, page);
-
+    const { totalHits: total, hits: data } = await fetchImages(
+      inputValue,
+      page
+    );
+    totalPages = Math.ceil(total / PER_PAGE);
     if (!data.length) {
       throw new Error(
         'Sorry, there are no images matching your search query. Please try again!'
@@ -52,11 +56,12 @@ async function actionFormSubmit(event) {
 
     createGallery(data);
 
-    if (data.length >= PER_PAGE) {
-      showLoadMoreButton();
-    } else {
+    if (page >= totalPages) {
       hideLoadMoreButton();
+    } else {
+      showLoadMoreButton();
     }
+    page = 2;
   } catch (error) {
     iziToast.error({
       title: 'Error',
@@ -66,7 +71,6 @@ async function actionFormSubmit(event) {
       position: 'topRight',
     });
   } finally {
-    page = 2;
     hideLoader();
   }
 }
@@ -78,23 +82,12 @@ async function actionBtnClick(event) {
   showLoader();
 
   try {
-    const data = await fetchImages(inputValue, page);
-
-    if (!data.length) {
-      iziToast.info({
-        title: 'Info',
-        message: "We're sorry, but you've reached the end of search results.",
-        position: 'topRight',
-      });
-      hideLoadMoreButton();
-      return;
-    }
+    const { hits: data } = await fetchImages(inputValue, page);
 
     createGallery(data);
     smoothScrollGallery();
-    page += 1;
 
-    if (data.length < PER_PAGE) {
+    if (page >= totalPages) {
       hideLoadMoreButton();
       iziToast.info({
         title: 'Info',
@@ -104,6 +97,7 @@ async function actionBtnClick(event) {
     } else {
       showLoadMoreButton();
     }
+    page += 1;
   } catch (error) {
     iziToast.error({
       title: 'Error',

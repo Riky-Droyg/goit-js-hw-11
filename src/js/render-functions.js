@@ -1,24 +1,22 @@
 import { fetchImages } from './pixabay-api';
 import SimpleLightbox from 'simplelightbox';
 
-const gallery = document.querySelector('.gallery');
+const gallery = document.querySelector('ul.gallery');
 const loader = document.querySelector('.loader');
-const lightbox = new SimpleLightbox('.photo-card div a', {});
+const lightbox = new SimpleLightbox('.gallery a', {});
 const btn = document.querySelector('.btn[type=button]');
-
-
 
 export function createGallery(array) {
   const markup = array.reduce(
     (
       acc,
-      { likes, views, comments, downloads, previewURL, largeImageURL, tags }
+      { likes, views, comments, downloads, webformatURL, largeImageURL, tags }
     ) =>
       acc +
       `<li class="photo-card">
         <div>
           <a href="${largeImageURL}">
-            <img src="${previewURL}" alt="${tags}">
+            <img src="${webformatURL}" alt="${tags}">
           </a>
         </div>
         <ul>

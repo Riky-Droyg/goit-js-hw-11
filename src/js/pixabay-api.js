@@ -13,6 +13,5 @@ export async function fetchImages(query, page) {
     },
   });
 
-  console.log(response.data);
-  return response.data.hits;
+  return response.data;
 }
