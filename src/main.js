@@ -1,48 +1,121 @@
-// У файлі main.js напиши всю логіку роботи додатка. Виклики нотифікацій iziToast, усі перевірки на довжину масиву в отриманій відповіді робимо саме в цьому файлі. Імпортуй в нього функції із файлів pixabay-api.js та render-functions.js та викликай їх у відповідний момент.
-
 import './css/style.css';
 import 'izitoast/dist/css/iziToast.min.css';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-import './js/pixabay-api';
-import './js/render-functions';
+
+import { fetchImages } from './js/pixabay-api';
 import {
   clearGallery,
   createGallery,
-  getImagesByQuery,
   hideLoader,
+  hideLoadMoreButton,
   showLoader,
+  showLoadMoreButton,
+  smoothScrollGallery,
 } from './js/render-functions';
 import iziToast from 'izitoast';
 
 const form = document.querySelector('.form');
+const btn = document.querySelector('.btn[type=button]');
+const input = document.querySelector('input[name="search-text"]');
 
-form.addEventListener('submit', event => {
+let page = 1;
+let inputValue = '';
+const PER_PAGE = 15;
+
+async function actionFormSubmit(event) {
   event.preventDefault();
-  const input = event.target.elements['search-text'].value.trim();
-  if (!input) {
+
+  inputValue = input.value.trim();
+  hideLoadMoreButton();
+
+  if (!inputValue) {
     iziToast.info({
-        title: 'info',
-        message:
-          'Поле вводу порожнє',
-        position: 'topRight',
-      });
-      return
-  };
+      title: 'Info',
+      message: 'Поле вводу порожнє',
+      position: 'topRight',
+    });
+    return;
+  }
 
   clearGallery();
   showLoader();
-  getImagesByQuery(input)
-    .then(result => createGallery(result))
 
-    .catch(error => {
-      iziToast.error({
-        title: 'Error',
-        message:
-          'Sorry, there are no images matching your search query. Please try again!',
+  try {
+    page = 1;
+    const data = await fetchImages(inputValue, page);
+
+    if (!data.length) {
+      throw new Error(
+        'Sorry, there are no images matching your search query. Please try again!'
+      );
+    }
+
+    createGallery(data);
+
+    if (data.length >= PER_PAGE) {
+      showLoadMoreButton();
+    } else {
+      hideLoadMoreButton();
+    }
+  } catch (error) {
+    iziToast.error({
+      title: 'Error',
+      message:
+        error.message ||
+        'Sorry, there are no images matching your search query. Please try again!',
+      position: 'topRight',
+    });
+  } finally {
+    page = 2;
+    hideLoader();
+  }
+}
+
+async function actionBtnClick(event) {
+  event.preventDefault();
+
+  hideLoadMoreButton();
+  showLoader();
+
+  try {
+    const data = await fetchImages(inputValue, page);
+
+    if (!data.length) {
+      iziToast.info({
+        title: 'Info',
+        message: "We're sorry, but you've reached the end of search results.",
         position: 'topRight',
       });
-    })
-    .finally(() => {
-      hideLoader();
+      hideLoadMoreButton();
+      return;
+    }
+
+    createGallery(data);
+    smoothScrollGallery();
+    page += 1;
+
+    if (data.length < PER_PAGE) {
+      hideLoadMoreButton();
+      iziToast.info({
+        title: 'Info',
+        message: "We're sorry, but you've reached the end of search results.",
+        position: 'topRight',
+      });
+    } else {
+      showLoadMoreButton();
+    }
+  } catch (error) {
+    iziToast.error({
+      title: 'Error',
+      message:
+        error.message ||
+        'Sorry, there are no images matching your search query. Please try again!',
+      position: 'topRight',
     });
-});
+  } finally {
+    hideLoader();
+  }
+}
+
+form.addEventListener('submit', actionFormSubmit);
+btn.addEventListener('click', actionBtnClick);

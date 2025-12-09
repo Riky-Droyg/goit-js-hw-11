@@ -4,18 +4,9 @@ import SimpleLightbox from 'simplelightbox';
 const gallery = document.querySelector('.gallery');
 const loader = document.querySelector('.loader');
 const lightbox = new SimpleLightbox('.photo-card div a', {});
-const btn = document.querySelector('.btn[type=submit]');
-export function getImagesByQuery(query) {
-  return fetchImages(query)
-    .then(data => {
-      if (!data.length) {
-        throw new Error(
-          'Sorry, there are no images matching your search query. Please try again!'
-        );
-      }
-      return data;
-    })
-}
+const btn = document.querySelector('.btn[type=button]');
+
+
 
 export function createGallery(array) {
   const markup = array.reduce(
@@ -39,8 +30,8 @@ export function createGallery(array) {
       </li>`,
     ''
   );
+  gallery.insertAdjacentHTML('beforeend', markup);
 
-  gallery.innerHTML = markup;
   lightbox.refresh();
 }
 
@@ -59,4 +50,17 @@ export function hideLoadMoreButton() {
 }
 export function showLoadMoreButton() {
   btn.classList.remove('is-hidden');
+}
+
+export function smoothScrollGallery() {
+  const firstCard = document.querySelector('.gallery .photo-card');
+  if (!firstCard) return;
+
+  const { height: cardHeight } = firstCard.getBoundingClientRect();
+
+  window.scrollBy({
+    top: cardHeight * 2,
+    left: 0,
+    behavior: 'smooth',
+  });
 }
